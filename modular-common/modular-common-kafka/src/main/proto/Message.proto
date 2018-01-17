@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package elinmessage;
+
+option java_package = "com.py.modular.common.base";
+option java_outer_classname = "KafkaMessage";
+
+/**
+ * 注意：由于原生的protoc工具（至少截止到3.2.0版本）处理设置空字符串字段的默认行为是
+ * 抛出空指针异常（NullPointerExceptions），故使用定制版的protoc工具生产代码。
+ */
+
+/**
+ * 消息类型
+ */
+enum MessageType {
+    MT_UNKNOWN = 0;
+
+    // 消息类型一
+    MT_FIRST = 1;
+    // 消息类型二
+    MT_SECOND = 2;
+    // 消息类型三
+    MT_THIRD = 3;
+}
+
+/**
+ * 消息封装格式
+ */
+message MessageWrap {
+    // 消息类型
+    MessageType messageType = 1;
+
+    oneof message {
+        // 发票数据请求消息
+        MessageDB messageReq = 2;
+
+        // 发票数据应答消息
+        MessageMG messageRsp = 3;
+
+    }
+}
+
+/**
+ * 请求消息
+ */
+message MessageDB {
+    int64 id = 1;
+    string describe = 2;
+    int32 firstState = 3;
+    int32 secondState = 4;
+    int32 thirdState = 5;
+    string firstTime = 6;
+    string secondTime = 7;
+    string thirdTime = 8;
+    string createTime = 9;
+    string updateTime = 10;
+}
+
+/**
+ * 发票数据同步应答消息
+ */
+message MessageMG {
+    int64 id = 1;
+    string describe = 2;
+    int32 firstState = 3;
+    int32 secondState = 4;
+    int32 thirdState = 5;
+    string firstTime = 6;
+    string secondTime = 7;
+    string thirdTime = 8;
+    string createTime = 9;
+    string updateTime = 10;
+}
+

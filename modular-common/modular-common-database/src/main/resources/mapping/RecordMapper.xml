@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapping 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.py.modular.common.database.dao.RecordMapper">
+    <resultMap id="BaseResultMap" type="com.py.modular.common.database.entity.Record">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="describe" property="describe" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="first_state" property="firstState" jdbcType="TINYINT"/>
+        <result column="second_state" property="secondState" jdbcType="TINYINT"/>
+        <result column="third_state" property="thirdState" jdbcType="TINYINT"/>
+        <result column="first_time" property="firstTime" jdbcType="TIMESTAMP"/>
+        <result column="second_time" property="secondTime" jdbcType="TIMESTAMP"/>
+        <result column="third_time" property="thirdTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, `describe`, create_time,update_time,first_state, second_state, third_state,first_time,second_time,third_time
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.py.modular.common.database.entity.Record" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO record (`describe`, create_time,update_time,first_state,
+        second_state, third_state)
+        VALUES (#{describe,jdbcType=VARCHAR},NOW(),NOW()
+        ,#{firstState,jdbcType=TINYINT}
+        ,#{secondState,jdbcType=TINYINT}, #{thirdState,jdbcType=TINYINT}
+     )
+    </insert>
+    <update id="updateById" parameterType="com.py.modular.common.database.entity.Record">
+        UPDATE record
+        <set>
+            <if test="describe != null">
+                `describe` = #{describe,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstState != null">
+                first_state = #{firstState,jdbcType=TINYINT},
+            </if>
+            <if test="secondState != null">
+                second_state = #{secondState,jdbcType=TINYINT},
+            </if>
+            <if test="thirdState != null">
+                third_state = #{thirdState,jdbcType=TINYINT},
+            </if>
+            <if test="firstTime != null">
+                first_time = #{firstTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="secondTime != null">
+                second_time = #{secondTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="thirdTime != null">
+                third_time = #{thirdTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateFirstState">
+        UPDATE record
+        SET first_state=1,first_Time=NOW(),update_time=NOW()
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateSecondState">
+        UPDATE record
+        SET second_state=1,second_time=NOW(),update_time=NOW()
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateThirdState">
+        UPDATE record
+        SET third_state=1,third_time=NOW(),update_time=NOW()
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findCanSync" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record
+        WHERE first_state=1 AND second_state=1 AND third_state=1
+        AND create_time &gt;= #{createTime,jdbcType=TIMESTAMP}
+        ORDER BY update_time limit #{limit,jdbcType=INTEGER}
+    </select>
+
+    <select id="findByStates" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record
+        WHERE first_state=#{firstState,jdbcType=INTEGER}
+        AND second_state=#{secondState,jdbcType=INTEGER}
+        AND third_state=#{thirdState,jdbcType=INTEGER}
+        AND create_time &gt;= #{createTime,jdbcType=TIMESTAMP}
+        ORDER BY update_time limit #{limit,jdbcType=INTEGER}
+    </select>
+</mapper>

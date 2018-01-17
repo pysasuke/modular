@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <!--定义日志文件的存储地址-->
+    <property name="LOG_HOME" value="log/modular-exhandler"/>
+    <!--文件名前缀-->
+    <property name="FILENAME_PREFIX" value="%d{yyyyMMdd}/%d{yyyyMMdd}-exhandler"/>
+    <!--正常格式-->
+    <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+    <property name="NORMAL_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}: %msg%n"/>
+    <!--消息格式-->
+    <property name="MESSAGE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS}: %msg%n"/>
+    <!--日志文件保留天数-->
+    <property name="MAX_HISTORY" value="30"/>
+
+    <!-- 覆写CONSOLE、FILE -->
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!--格式化输-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${NORMAL_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 程序运行主日志 -->
+    <!-- 按照每天生成日志文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/${FILENAME_PREFIX}.log</FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${NORMAL_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 职能日志 -->
+    <!-- 收到的正常消息 -->
+    <appender name="messageIn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${FILENAME_PREFIX}-message-in.log</FileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${MESSAGE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 收到的异常消息 -->
+    <appender name="messageInError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${FILENAME_PREFIX}-message-in-error.log</FileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${MESSAGE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 发出的正常消息 -->
+    <appender name="messageOut" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${FILENAME_PREFIX}-message-out.log</FileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${MESSAGE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 发出的异常消息 -->
+    <appender name="messageOutError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${FILENAME_PREFIX}-message-out-error.log</FileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${NORMAL_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- logger name 设置 -->
+    <!-- 日志输出级别 -->
+    <logger name="messageIn" level="INFO" additivity="false">
+        <appender-ref ref="messageIn"/>
+    </logger>
+
+    <logger name="messageInError" level="INFO" additivity="false">
+        <appender-ref ref="messageInError"/>
+    </logger>
+
+    <logger name="messageOut" level="INFO" additivity="false">
+        <appender-ref ref="messageOut"/>
+    </logger>
+
+    <logger name="messageOutError" level="INFO" additivity="false">
+        <appender-ref ref="messageOutError"/>
+    </logger>
+
+    <!-- root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
